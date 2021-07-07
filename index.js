@@ -36,10 +36,10 @@ app.get('/search', (req, res) => {
 
 app.post('/search', (req, res) => {
   //run();
-  res.setHeader("Content-Type", "text/html");
-
-  let serachResult="";
-  res.send(searchPagefiles+ serachResult+PageEend)
+  console.log("Search Post");
+ // res.setHeader("Content-Type", "text/html"); 
+    searchData(req,res) ;
+       //     res.send() 
 })
 //Add User Screen
 app.get('/add', (req, res) => {
@@ -48,7 +48,7 @@ app.get('/add', (req, res) => {
 })
 
 app.post('/add', (req, res) => {
-  
+  console.log("add Post");
   res.redirect("/search");
 })
 // Update User
@@ -74,6 +74,7 @@ app.get('/update', (req, res) => {
 app.post('/update', (req, res) => {
   //res.setHeader("Content-Type", "text/html");
   //Update Process
+  console.log("Update Post");
   res.redirect("/search");
 })
 
@@ -82,7 +83,9 @@ app.post('/update', (req, res) => {
 app.post('/delete', (req, res) => {
   //res.setHeader("Content-Type", "text/html");
   //Delete Process
-  res.redirect("/search");
+  console.log("Delete Post");
+  deleteData( req,res) 
+
 })
 
 async function run() {
@@ -116,6 +119,71 @@ async function run() {
 }
 
 
+async function searchData( req,res) {
+  let first_name=req.body.first_name;
+  let last_name=req.body.last_name;
+  let connection;
+
+  try {
+    connection = await oracledb.getConnection( {
+      user          : oraUser,
+      password      : oraPasswd,
+      connectString : connectUrl
+    });
+
+     const result = await connection.execute(
+       `SELECT USER_ID,USENAME,FIRRST_NAME,LAST_NAME,EMAIL,CREATE_BY,CREATE_DATE,LAST_UPDATE_BY,LAST_UPDATE_DATE from users where first_Name=:fisrtName and last_name=:lastName`,
+       [first_name,last_name],  // bind value for :fistName  :last Name
+     );
+    console.log(result.rows);
+    //extract and print result 
+    res.end(searchPagefiles+PageEend);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+}
+
+
+async function deleteData( req,res) {
+  let user_id=req.body.user_id;
+  
+  let connection;
+
+  try {
+    connection = await oracledb.getConnection( {
+      user          : oraUser,
+      password      : oraPasswd,
+      connectString : connectUrl
+    });
+
+     const result = await connection.execute(
+       `delete   from users where user_id=:user_id`,
+       [user_id],  // bind value for :fistName  :last Name
+     );
+    console.log(result.rows);
+    //extract and print result 
+   // res.end(searchPagefiles+PageEend);
+   res.redirect("/search");
+  } catch (err) {
+    console.error(err);
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+}
 
 
 
