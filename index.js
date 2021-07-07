@@ -52,13 +52,11 @@ async function run() {
       connectString : connectUrl
     });
 
-    // const result = await connection.execute(
-    //   `SELECT manager_id, department_id, department_name
-    //    FROM departments
-    //    WHERE manager_id = :id`,
-    //   [103],  // bind value for :id
-    // );
-   // console.log(result.rows);
+     const result = await connection.execute(
+       `SELECT 1 from dual`,
+      // [103],  // bind value for :id
+     );
+    console.log(result.rows);
 
   } catch (err) {
     console.error(err);
