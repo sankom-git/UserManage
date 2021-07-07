@@ -9,6 +9,7 @@
   "author": "Sankom Sanpuinya",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "oracledb": "^5.2.0"
   }
 }
